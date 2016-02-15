@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+"""
+Conducts operations related to the operation of Badger projects.
+"""
+
+import badger
+import badger.core
+
+import argparse, os
+
+parser = argparse.ArgumentParser(description='Work on badger projects.')
+
+parser.add_argument('command', metavar='Command', type=str,
+                    nargs=1, help='The badger project command to execute.')
+
+parser.add_argument('operation', metavar='Operation', type=str,
+                    nargs="?", help='The badger project command to execute.')
+
+parser.add_argument('arguments', metavar='Name', type=str,
+                    nargs="?", help='The badger project command to execute.')
+
+parser.add_argument('text', metavar='Name', type=str,
+                    nargs="?", help='The badger project command to execute.')
+
+
+args = parser.parse_args()
+
+if args.operation == 'notebook':
+    notes = badger.core.Notebook(args.arguments[0])
+    if args.command[0] == "new":
+        notes.create()
+    elif args.command[0] == "build":
+        notes.build()
+    elif args.command[0] == "workon":
+        config = badger.core.Configuration()
+        config.set('current', 'notebook', args.arguments)
+        print "Now working in notebook '{}'".format(args.arguments)
+
+elif args.operation == 'project':
+    config = badger.core.Configuration()
+    
+    if args.command[0] == 'new':
+        places = args.arguments.split('/')
+
+        if len(places) == 1:
+            notes = badger.core.Notebook(config.config.get('current', 'notebook'))
+            project = badger.core.Project(notes, places[0])
+            if project.create():
+                print "Created new project at {} in {}".format(places[0], notes.name)
+        elif len(places) == 2:
+            notes = badger.core.Notebook(places[0])
+            project = badger.core.Project(notes, places[1])
+            if project.create():
+                print "Created new project at {} in {}".format(places[1], places[0])
+                
+    elif args.command[0] == "workon":
+        config = badger.core.Configuration()
+        places = args.arguments.split('/')
+        if len(places) == 1:
+            notes = badger.core.Notebook(config.config.get('current', 'notebook'))
+            project = badger.core.Project(notes, places[0])
+            config.set('current', 'project', project.name)
+            
+        elif len(places) == 2:
+            notes = badger.core.Notebook(places[0])
+            project = badger.core.Project(notes, places[1])
+            config.set('current', 'notebook', notes.name)
+            config.set('current', 'project', project.name)
+    
+        print "Now working in project '{}/{}'".format(notes.name, project.name)
+
+        
+elif args.command[0] == 'current':
+    config = badger.core.Configuration()
+    print "Current Notebook:\t {}".format(config.config.get('current', 'notebook'))
+    print "\tProject:\t {}".format(config.config.get('current', 'project'))
+
+elif args.operation == 'note':
+    config = badger.core.Configuration()
+    if args.command[0] == 'add':
+        if args.text:
+            np = args.arguments.split('/')
+            if len(np)==1:
+                notes = badger.core.Notebook(config.config.get('current', 'notebook'))
+                note = badger.core.Note(notes, np[0], args.text)
+                if note.create():
+                    print "Created new note in {}/{}".format(places[0], notes.name)
+            elif len(np) == 2:
+                notes = badger.core.Notebook(places[0])
+                project = badger.core.Project(notes, places[1])
+                note = badger.core.Note(notes, project, args.text)
+                if note.create():
+                    print "Created new note in {}/{}".format(places[0], notes.name)
+
+        else:
+            notes = badger.core.Notebook(config.config.get('current', 'notebook'))
+            project = badger.core.Notebook(config.config.get('current', 'project'))
+            note = badger.core.Note(notes, project, args.arguments)
+            if note.create():
+                    print "Created new note in {}/{}".format(places[0], notes.name)
+            
+
