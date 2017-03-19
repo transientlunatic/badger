@@ -1,0 +1,7 @@
+---
+date: {{ date }}
+title: {{ title }}
+tags: 
+---
+
+This is a place where notes should be able to be typed. 

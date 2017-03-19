@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="row">
+      <div class="page-header">
+	{% if meta['title'] %}
+        <h1>{{ meta['title'] }} <small>{{ meta['subtitle'] }}</small></h1>
+	{% endif %}
+	  {% if meta['date'] %}
+	  <h2>{{ meta['datepretty'] }}</h2>
+	  {% endif %}
+	  {% if meta.author_email %}
+	  <a href='mailto:{{ meta.author_email }}'>
+          <p><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ meta.author }}</p>
+	  </a>
+	  {% endif %}
+        </div>
+        {% if meta.breadcrumbs %}
+        <ol class="breadcrumb">
+            {% for crumb in meta.breadcrumbs %}
+            <li><a href="{{ crumb[0] }}">{{ crumb[1] }}</a></li>
+            {% endfor %}
+	{% endif %}
+        </ol>
+    </div>

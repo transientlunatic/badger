@@ -3,7 +3,7 @@
 
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -16,11 +16,13 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     # TODO: put package requirements here
+    "Click"
 ]
 
 test_requirements = [
     # TODO: put package test requirements here
 ]
+
 
 setup(
     name='badger',
@@ -36,7 +38,10 @@ setup(
     package_dir={'badger':
                  'badger'},
     include_package_data=True,
-    install_requires=requirements,
+    entry_points='''
+        [console_scripts]
+        badger=badger.badger:cli
+    ''',
     license="ISCL",
     zip_safe=False,
     keywords='badger',
